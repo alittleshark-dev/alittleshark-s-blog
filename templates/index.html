@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <title>小鲨鱼的主页</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+        <link rel="icon" href="{{ url_for('static', filename='images/icon.jpg') }}">
+        <!-- <link rel="stylesheet" href="../static/css/index.css"> -->
+        <!-- <link rel="icon" href="../static/images/icon.jpg"> -->
+    </head>
+    <body>
+        <!-- 顶部导航栏 -->
+        <header class="mainbar card">
+            <div id="icon" class="item">小鲨鱼的主页</div>
+            <a href="#section-intro" class="item" id="home">首页</a>
+            <a href="#acrhive" class="item" id="archive">文章</a>
+            <a href="#firendship" class="item" id="firendship">友链</a>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main id="section-main" class="card">
+            <!-- 介绍文字 -->
+            <div class="intro-text">
+                <p>
+                    你好,我是一条小鲨!<br>
+                    欢迎来到我的海域!<br>
+                </p>
+            </div>
+            <!-- 头像 -->
+            <div class="intro-avatar">
+                <!-- 路径未改动 -->
+                <!-- <img src="../static/images/icon.jpg" alt="小鲨头像" style="width: 100px; height: 100px; border-radius: 10px;"> -->
+                <img src="{{ url_for('static', filename='images/icon.jpg') }}" alt="小鲨头像" style="width: 100px; height: 100px; border-radius: 10px;">
+            </div>
+        </main>
+
+        <!-- 爱好 -->
+        <section id="section-hobby" class="card">
+            <span>♥️</span>
+            <p>编程、音乐</p>
+        </section>
+        
+        <!-- 生日 -->
+        <section id="brith" class="card">
+            <span>🎂</span>
+            <p>2/17</p>
+        </section>
+
+        <!-- 交互组件 -->
+        <button id="theme-toggle">切换主题</button>
+        
+        <!-- Shell窗口 -->
+        <div id="shell" class="card">
+            <input id="shell-cmd">
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="site-footer" class="card">
+            <p>© 2026 一条小鲨</p>
+        </footer>
+
+        <!-- 脚本引用保持在底部，利于加载 -->
+        <script src="{{ url_for('static', filename='js/transbutton.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/transpage.js') }}"></script>
+        <!-- <script src="../static/js/transbutton.js"></script> -->
+        <!-- <script src="../static/js/transpage.js"></script> -->
+    </body>
+</html>
