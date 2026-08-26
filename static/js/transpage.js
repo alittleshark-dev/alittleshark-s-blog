@@ -8,6 +8,8 @@ const shell = document.getElementById("shell");
 var cmdline = document.getElementById("shell-cmd");
 // 当前目录
 var dir = "home";
+var cmdHistory = []; 
+var historyIndex = -1;
 // 朋友信息
 const friendsData = [
         {
@@ -160,6 +162,8 @@ function handleShellKeydown(e) {
 
         // 2. 处理命令
         if (cmd) {
+            cmdHistory.push(cmd);
+            historyIndex = -1;
             const parts = cmd.split(" ");
             if (parts[0] === "clear") {
                 // 清屏：清空后重建初始提示行
@@ -220,6 +224,39 @@ function handleShellKeydown(e) {
                     }
                 }
             }
+            
+            else if (parts[0] === "help") {
+                output.textContent = `help    查看帮助
+clear   清屏
+ls      查看当前目录下的目录和文件
+cd      切换当前目录
+histroy 查看历史命令`
+            }
+
+            else if (parts[0] === "history") {
+                if (cmdHistory.length === 0) {
+                    output.textContent = "暂无历史记录";
+                }
+
+                else if (parts[1] === "-c") {
+                    cmdHistory = [];
+                    historyIndex = -1;
+                    output.textContent = "history clear.";
+                }
+
+                else {
+                    output.textContent = cmdHistory.map((cmd, i) => 
+                        "  " + (i + 1) + "  " + cmd
+                    ).join("\n");
+                }
+            }
+
+            else if (parts[0] === "fastfetch") {
+                output.textContent = `user@WebOS
+OS: WebOS xJs
+Shell: WebShell
+Kernel: Linux 7.1.9-zen`;
+            }
             else {
                 output.textContent = cmd + ": 未找到命令";
             }
@@ -247,6 +284,30 @@ function handleShellKeydown(e) {
         // 5. 滚动到底部并聚焦
         shell.scrollTop = shell.scrollHeight;
         newCmd.focus();
+    }
+
+    // 查看历史命令
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (cmdHistory.length === 0) return;
+        if (historyIndex < cmdHistory.length - 1) {
+            historyIndex++;
+        }
+        this.value = cmdHistory[cmdHistory.length - 1 - historyIndex];
+        return;
+    }
+
+    // 查看下一条历史命令
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (historyIndex <= 0) {
+            historyIndex = -1;
+            this.value = "";
+            return;
+        }
+        historyIndex--;
+        this.value = cmdHistory[cmdHistory.length - 1 - historyIndex];
+        return;
     }
 }
 
