@@ -286,6 +286,28 @@ Kernel: Linux 7.1.9-zen`;
         newCmd.focus();
     }
 
+    if (e.key == "Tab") {
+        e.preventDefault();
+
+        const commands = ["help", "clear", "ls", "cd", "fastfetch", "history"];
+
+        const input = this.value.trim();
+        if (!input) return;
+
+        const matches = commands.filter(cmd => cmd.startsWith(input));
+
+        if (matches.length === 1) {
+            this.value = matches[0] + " ";
+
+        } else if (matches.length > 1) {
+            const output = document.createElement("div");
+            output.className = "output";
+            output.textContent = matches.join("  ");
+            shell.appendChild(output);
+            shell.scrollTop = shell.scrollHeight;
+        }
+    }
+
     // 查看历史命令
     if (e.key === "ArrowUp") {
         e.preventDefault();
