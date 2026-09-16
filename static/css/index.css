@@ -288,3 +288,73 @@ a {
     transform: translateX(800px);
   }
 }
+
+/* ======================================== 移动端适配 (Mobile Responsive) ======================================== */
+@media (max-width: 768px) {
+    /* 1. 全局调整 */
+    body {
+        padding: 10px; /* 减少两侧留白 */
+        /* 保持 grid 布局，但让内部元素自适应宽度 */
+    }
+
+    /* 2. 通用卡片类：强制宽度 100% */
+    .card {
+        width: 100% !important; /* 覆盖原来的 500px */
+        box-sizing: border-box; /* 确保 padding 不会撑破宽度 */
+    }
+
+    /* 3. 导航栏调整 */
+    .mainbar {
+        width: 100% !important; /* 覆盖原来的 600px */
+        flex-wrap: wrap; /* 允许换行 */
+        justify-content: center;
+    }
+    .item {
+        width: 45%; /* 一行放两个按钮，或者根据需要调整 */
+        margin: 5px 0;
+    }
+
+    /* 4. 核心内容区：改为上下结构 */
+    #section-main {
+        grid-template-columns: 1fr; /* 强制单列 */
+        grid-template-areas: 
+            "maintext"
+            "myicon"; /* 文字在上，图片在下 */
+        text-align: center; /* 文字居中 */
+        gap: 20px;
+        padding: 10px;
+    }
+
+    /* 自我介绍文字 */
+    .intro-text {
+        border-right: none; /* 去掉右边的竖线 */
+        border-bottom: 1px solid var(--color-border); /* 加到底部 */
+        padding-right: 0;
+        padding-bottom: 20px;
+        justify-content: center; /* 文字居中 */
+    }
+
+    /* 头像图片 */
+    .intro-avatar {
+        justify-content: center; /* 图片居中 */
+    }
+
+    /* 5. 终端窗口优化 */
+    #shell {
+        position: static; /* 取消固定定位，让它随页面滚动 */
+        width: 100%;
+        height: auto;
+        max-height: 300px; /* 限制最大高度 */
+        margin-top: 10px;
+        left: 0;
+        top: 0;
+    }
+
+    /* 6. 底部 Footer */
+    #site-footer {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
