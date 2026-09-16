@@ -230,9 +230,10 @@ function handleShellKeydown(e) {
 clear   清屏
 ls      查看当前目录下的目录和文件
 cd      切换当前目录
+chcolor 切换颜色模式
 histroy 查看历史命令`
             }
-
+            else if (parts[0] == "chcolor") {chcolor();}
             else if (parts[0] === "history") {
                 if (cmdHistory.length === 0) {
                     output.textContent = "暂无历史记录";
@@ -289,7 +290,7 @@ Kernel: Linux 7.1.9-zen`;
     if (e.key == "Tab") {
         e.preventDefault();
 
-        const commands = ["help", "clear", "ls", "cd", "fastfetch", "history"];
+        const commands = ["help", "clear", "ls", "cd", "fastfetch", "history", "chcolor"];
 
         const input = this.value.trim();
         if (!input) return;

@@ -7,7 +7,7 @@ if (currentTheme === 'dark') {
     toggleBtn.textContent = '浅色模式'; // 按钮文字变化
 }
 
-toggleBtn.addEventListener('click', () => {
+function chcolor(){
     body.classList.toggle('dark-mode');
 
     if (body.classList.contains('dark-mode')) {
@@ -17,4 +17,6 @@ toggleBtn.addEventListener('click', () => {
         localStorage.setItem('theme', 'light');
         toggleBtn.textContent = '切换深色';
     }
-});
+}
+
+toggleBtn.addEventListener('click', chcolor);
