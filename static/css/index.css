@@ -306,8 +306,7 @@ a {
     /* 3. 导航栏调整 */
     .mainbar {
         width: 100% !important; /* 覆盖原来的 600px */
-        flex-wrap: wrap; /* 允许换行 */
-        justify-content: center;
+        
     }
     .item {
         width: 45%; /* 一行放两个按钮，或者根据需要调整 */
@@ -348,6 +347,7 @@ a {
         margin-top: 10px;
         left: 0;
         top: 0;
+        z-index: 2;
     }
 
     /* 6. 底部 Footer */
