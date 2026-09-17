@@ -1,7 +1,8 @@
 // 获取导航按钮
 const home = document.getElementById("home");
 const archive = document.getElementById("archive");
-const firendship = document.getElementById("firendship");
+const retreated = document.getElementById("retreated");
+const friendship = document.getElementById("friendship");
 // Shell 窗口
 const shell = document.getElementById("shell");
 // cmd 输入窗口
@@ -26,6 +27,14 @@ const friendsData = [
             backupurl: "https://vingturbo.github.io/web-pages/main.html",
         }
     ];
+
+const archives = [
+    {
+        title: "Hello World!",
+        url: "./archive/hello/index.html",
+        date: "26-9-18"
+    },
+];
 
 let isAnimating = false;
 
@@ -91,15 +100,43 @@ function charchive() {
         articleSection.id = "section-article";
         articleSection.className = "card chage-in-page";
         articleSection.innerHTML = `<p style="padding:20px;">小鲨的文章...</p>`;
+        document.body.appendChild(articleSection);
+
+        archives.forEach(archive => {
+            const card = document.createElement("section");
+            card.id = "section-archive";
+            card.className = "card chage-in-page";
+            card.innerHTML = `
+                <div id="archive-line">
+                    <h3>${archive.title}</h3>
+                    <p>${archive.date}</p>
+                </div>
+            `;
+            card.style.cursor = "pointer";
+            card.onclick = () => window.open(archive.url, "_blank");
+            document.body.appendChild(card);
+        
+        });
 
         const end = document.createElement("section");
         end.id = "section-end";
         end.className = "card chage-in-page";
         end.innerHTML = `<p style="padding:20px; opacity:0.6;">---到底了哦---</p>`;
 
-        document.body.appendChild(articleSection);
         document.body.appendChild(end);
     });
+}
+
+function chretreated() {
+    switchPage("过去的文章", () => {
+        const card = document.createElement("section");
+        card.className = "crad chage-in-page";
+        card.innerHTML = `
+        <h1>待开发...</h1>
+        `;
+
+        document.body.appendChild(card);
+    })
 }
 
 // 朋友圈页
@@ -125,12 +162,16 @@ function chfirendship() {
 
 function ls(dir) {
     if (dir == "home") {
-        return " archive \n firendship";
+        return " archive \n friendship";
     }
     if (dir == "archive") {
-        return " 没有文章哦 \n home";
+        let output = "";
+        archives.forEach(archive => {
+            output += `${archive.title}\n`;
+        });
+        return output
     }
-    if (dir == "firendship") {
+    if (dir == "friendship") {
         let output = "";
         friendsData.forEach(friend => {
             output += `${friend.name}\n`;
@@ -145,11 +186,18 @@ home.addEventListener("click", (e) => {
     e.preventDefault();
     if (document.title === "小鲨鱼的主页") return;
     chhome(); });
+
 archive.addEventListener("click", (e) => {
     e.preventDefault();
     if (document.title === "小鲨的文章") return; 
     charchive(); });
-firendship.addEventListener("click", (e) => {
+
+retreated.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (document.title === "过去的文章") return;
+    chretreated(); });
+
+friendship.addEventListener("click", (e) => {
     e.preventDefault();
     if (document.title === "小鲨的朋友圈~") return; 
     chfirendship(); });
@@ -199,27 +247,34 @@ function handleShellKeydown(e) {
                     charchive();
                 }
                 
-                else if (target === "firendship") {
-                    dir = "firendship";
+
+                else if (target === "friendship") {
+                    dir = "friendship";
                     chfirendship();
                 }
                 
-                else if (target === ".." && (dir === "firendship" || dir === "archive")) {
+                else if (target === ".." && (dir === "friendship" || dir === "archive")) {
                     dir = "home";
                     chhome();
                 }
                 
-                else if (target === "home" && (dir === "firendship" || dir === "archive")) {
+                else if (target === "home" && (dir === "friendship" || dir === "archive")) {
                     dir = "home";
                     chhome();
                 }
 
                 else{
                     const found = friendsData.find(item => item.name === target);
+                    const archivefound = archives.find(item => item.title == target);
                     if (found) {
                         window.open(found.url, "_blank");
                         output.textContent = "Open " + found.name + " (" + found.url + ")...";
-                    } else {
+                    }
+                    else if (archivefound){
+                        window.open(archivefound.url, "_blank");
+                        output.textContent = "Open " + archivefound.name + "Archive" + " (" + archivefound.url + ")...";
+                    }
+                    else {
                         output.textContent = "cd: " + target + ": 没有那个文件或目录";
                     }
                 }
