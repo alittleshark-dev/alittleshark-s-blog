@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="欢迎! 我是一条小鲨! ">
+    <title>小鲨鱼的主页</title>
+
+    <link rel="alternate" type="application/rss+xml" title="小鲨的 RSS" href="/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="小鲨的 Atom" href="/atom.xml">
+
+    <link rel="stylesheet" href="./css/index.css?v=1791784114">
+    <link rel="stylesheet" href="./css/adaptation.css?v=1791784114">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="./images/icon.jpg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="小鲨鱼的主页">
+    <meta property="og:description" content="欢迎! 欢迎！我是一条小鲨! ">
+    <meta property="og:url" content="https://www.alittleshark.com/">
+    <meta property="og:image" content="https://www.alittleshark.com/images/icon.jpg">
+    <meta property="og:site_name" content="小鲨鱼的主页">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="小鲨鱼的主页">
+    <meta name="twitter:description" content="欢迎! 欢迎！我是一条小鲨! ">
+    <meta name="twitter:image" content="https://www.alittleshark.com/images/icon.jpg">
+</head>
+
+<body>
+    <!-- 顶部进度条 -->
+    <div id="top-progress"></div>
+
+    <!-- ============ 顶部导航栏 ============ -->
+    <header class="mainbar card">
+        <div id="icon" class="item">小鲨主页</div>
+        <a href="#section-intro" class="item" id="home">首页</a>
+        <a href="#acrhive" class="item" id="archive">文章</a>
+        <a href="#retreated" class="item" id="retreated">归档</a>
+        <a href="#photos" class="item" id="photos">相册</a>
+        <a href="#firendship" class="item" id="friendship">友链</a>
+    </header>
+
+    <!-- ============ 页面内容 ============ -->
+    <div id="page-container">
+        <main class="card" style="display: none;">
+            <h1>你好，我是一条小鲨</h1>
+            <p>欢迎来到我的海域！我是一个学生，平时喜欢编程和音乐。</p>
+        </main>
+
+        <section class="card" style="display: none;">
+            <h2>关于我</h2>
+            <p>一个学生，中专在读，平时喜欢玩玩游戏，搞搞音乐。</p>
+        </section>
+
+        <section class="card" style="display: none;">
+            <h2>会的不多</h2>
+            <p>Python、C++、Arch、Java、Dart</p>
+        </section>
+
+        <section class="card" style="display: none;">
+            <h2>在学</h2>
+            <p>Java、C++、Rust、TypeScript、Lua、Dart、Kotlin</p>
+        </section>
+    </div>
+
+    <!-- ============ 交互组件 ============ -->
+    <button id="theme-toggle">切换主题</button>
+
+    <!-- Shell 窗口 -->
+    <div id="shell" class="card">
+        <input id="shell-cmd">
+    </div>
+
+    <!-- ============ 页脚 ============ -->
+    <footer id="site-footer" class="card">
+        <div id="site-info">
+            <div>© 2026 一条小鲨</div>
+            <div id="info">
+                <!-- 微信 -->
+                <a href="javascript:;" class="social-icon" title="w7379919"
+                onclick="navigator.clipboard.writeText('w7379919'); alert('已经复制了喵!'); this.title='已复制';">
+                    <i class="fab fa-weixin"></i>
+                </a>
+
+                <!-- QQ -->
+                <a href="javascript:;" class="social-icon" title="3982205220"
+                onclick="navigator.clipboard.writeText('3982205220'); alert('已经复制了喵!'); this.title='已复制';">
+                    <i class="fab fa-qq"></i>
+                </a>
+
+                <!-- Bilibili -->
+                <a href="https://space.bilibili.com/3546749438266233" target="_blank" class="social-icon" title="B站">
+                    <i class="fab fa-bilibili"></i>
+                </a>
+
+                <!-- GitHub -->
+                <a href="https://github.com/alittleshark-dev" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+
+                <!-- 邮箱 -->
+                <a href="mailto:alittleshark@gmail.com" class="social-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+
+                <!-- Twitter / X -->
+                <a href="https://twitter.com/alittlesharkby2" target="_blank" class="social-icon">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+        <div id="icp">
+            <a href="https://icp.gov.moe/?keyword=20260044" target="_blank" style="font-size: 10px; color: pink;">萌ICP备20260044号</a>
+        </div>
+    </footer>
+
+    <!-- ============ 脚本 ============ -->
+    <script src="./js/transbutton.js?v=1791784114"></script>
+    <script src="./js/transpage.js?v=1791784114"></script>
+</body>
+</html>

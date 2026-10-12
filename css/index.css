@@ -1,0 +1,550 @@
+/* ========================================
+   变量定义与基础重置
+   ======================================== */
+
+/* 根变量：定义主题色（浅色/深色模式） */
+:root {
+  --color-bg-body: #F0FFF0;
+  --color-bg-box: rgba(255, 255, 255, 0.6);
+  --color-text-main: #333333;
+  --color-text-link: #87CEEB;
+  --color-text-accent: #E68FAC;
+  --color-border: #333333;
+}
+
+/* 深色模式变量 */
+body.dark-mode {
+  --color-bg-body: #1a1a1a;
+  --color-bg-box: rgba(50, 50, 50, 0.8);
+  --color-text-main: #f0f0f0;
+  --color-text-link: #4da6ff;
+  --color-text-accent: #ff99cc;
+  --color-border: #cccccc;
+}
+
+/* 字体引入 */
+@font-face {
+  font-family: 'BoBoHei';
+  src: url('../font/JingNanBoBoHei-Bold-2.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JunJunTi';
+  src: url('../font/JingNanJunJunTi-JinNanJunJunTi-Bold-2.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Maiyuan';
+  src: url('../font/Kingnammm-Maiyuan-II-Regular-2.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* ========================================
+   Body 与页面容器
+   ======================================== */
+
+body {
+  margin: 0;
+  padding: 10px;
+  background-color: var(--color-bg-body);
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* 动态内容容器：单列、居中、间距 */
+#page-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* ========================================
+   通用组件类
+   ======================================== */
+
+/* 所有卡片/容器的通用样式 */
+.card {
+  font-family: 'JunJunTi' !important;
+  width: 500px;
+  background-color: var(--color-bg-box);
+  color: var(--color-text-main);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+  border: none;
+  border-radius: 10px;
+}
+
+/* ========================================
+   导航栏 (Navbar)
+   ======================================== */
+
+.mainbar {
+  width: 600px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.item {
+  color: var(--color-text-link);
+  text-align: center;
+  font-family: 'Maiyuan';
+  width: 100px;
+  height: 35px;
+  line-height: 35px;
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* Logo 特殊样式 */
+#icon {
+  cursor: default;
+  margin-right: auto;
+}
+
+/* ========================================
+   内容模块 (Content Sections)
+   ======================================== */
+
+/* 主要板块 */
+#section-main {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-areas: "maintext myicon";
+  gap: 10px;
+  padding: 20px;
+}
+
+/* 自我介绍文字 */
+.intro-text {
+  grid-area: maintext;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 20px;
+  font-family: 'JunJunTi' !important;
+  color: var(--color-text-accent);
+  border-right: var(--color-border) solid 1px;
+  padding-right: 20px;
+}
+
+/* 自我介绍图片 */
+.intro-avatar {
+  grid-area: myicon;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#section-about {
+  padding: 20px;
+}
+
+/* 会的技能 */
+#section-skill {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* 爱好模块 */
+#section-hobby {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#brith {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#section-article {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+}
+
+#section-end {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+}
+
+#section-friend {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+}
+
+#site-footer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 820px;
+  height: 100px;
+  font-family: 'BoBoHei' !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.social-icon {
+  color: var(--color-text-main);
+}
+
+#site-info {
+  display: flex;
+}
+
+#info {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 2px var(--color-border) solid;
+}
+
+/* ========================================
+   相册样式
+   ======================================== */
+
+#section-gallery .photo img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ========================================
+   归档卡片（文章列表）
+   ======================================== */
+
+/* 归档卡片：去掉 card 自带 padding，让标签横条贴顶 */
+.archive-card {
+  padding: 0;
+  overflow: hidden;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* 卡片顶部的标签横条 */
+.archive-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(135, 206, 235, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 12px;
+}
+
+/* 深色模式下的横条 */
+body.dark-mode .archive-tags {
+  background: rgba(77, 166, 255, 0.12);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 卡片顶部的小标签 */
+.tag {
+  color: var(--color-text-link);
+  font-family: 'Maiyuan', sans-serif;
+}
+
+/* 标题 + 日期那行：两端对齐 */
+.archive-card .archive-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+/* ========================================
+   标签总览栏（筛选）
+   ======================================== */
+
+.tag-overview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  width: 600px;
+  box-sizing: border-box;
+}
+
+/* 筛选标签 */
+.tag-filter {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 12px;
+  background: rgba(135, 206, 235, 0.15);
+  color: var(--color-text-link);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Maiyuan', sans-serif;
+  user-select: none;
+}
+
+.tag-filter:hover {
+  background: rgba(135, 206, 235, 0.3);
+}
+
+.tag-filter.active {
+  background: var(--color-text-link);
+  color: #fff;
+}
+
+body.dark-mode .tag-filter {
+  background: rgba(77, 166, 255, 0.12);
+}
+
+body.dark-mode .tag-filter.active {
+  background: #4da6ff;
+  color: #fff;
+}
+
+/* ========================================
+   时间轴
+   ======================================== */
+
+.timeline {
+  position: relative;
+  padding-left: 24px;
+  border-left: 2px solid var(--color-text-link);
+  margin-left: 8px;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 12px 0 12px 8px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -30px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-text-link);
+  border: 2px solid var(--color-bg-body);
+}
+
+/* 深色模式下的圆点边框 */
+body.dark-mode .timeline-dot {
+  border-color: var(--color-bg-body);
+}
+
+.timeline-content h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--color-text-main);
+}
+
+.timeline-content p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-main);
+  opacity: 0.7;
+}
+
+.timeline-content .tag {
+  margin-left: 8px;
+  color: var(--color-text-link);
+}
+
+/* ========================================
+   交互组件 (Theme Toggle)
+   ======================================== */
+
+#theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg-box);
+  color: var(--color-text-main);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Maiyuan';
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+#theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+/* ========================================
+   Shell 终端
+   ======================================== */
+
+#shell {
+  text-align: left;
+  position: fixed;
+  left: 10px;
+  top: 100px;
+  width: 200px;
+  height: 300px;
+  z-index: 100;
+  padding: 10px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 命令回显行 */
+.shell-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 2px;
+}
+
+/* 命令输出行 */
+.shell-output {
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+
+/* 提示符样式 */
+#shell span[style*="white-space: pre"] {
+  white-space: pre;
+  margin-right: 4px;
+}
+
+/* 输入框融入终端背景 */
+#shell-cmd {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: "JunJunTi";
+  font-size: 14px;
+  flex: 1;
+  color: var(--color-text-main);
+}
+
+/* ========================================
+   动态效果组件 (Action)
+   ======================================== */
+
+/* ========================================
+   分页条（贴合整体柔和风格）
+   ======================================== */
+
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 10px;
+  padding: 8px 12px;
+  user-select: none;
+  font-family: 'Maiyuan', sans-serif;
+}
+
+/* 所有按钮（span 做按钮） */
+.pager-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(135, 206, 235, 0.15);
+  color: var(--color-text-link);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 悬停：加深背景，跟 .tag-filter:hover 一致 */
+.pager-btn:hover {
+  background: rgba(135, 206, 235, 0.3);
+}
+
+/* 当前页：实心，跟 .tag-filter.active 一致 */
+.pager-btn.active {
+  background: var(--color-text-link);
+  color: #fff;
+  cursor: default;
+}
+
+/* 禁用态：降低不透明度，不加边框不加阴影 */
+.pager-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 禁用态悬停不变化 */
+.pager-btn.disabled:hover {
+  background: rgba(135, 206, 235, 0.15);
+}
+
+/* 上一页 / 下一页略微加点内边距 */
+.pager-btn:first-child,
+.pager-btn:last-child {
+  padding: 0 14px;
+}
+
+/* ========================================
+   换页动画
+   ======================================== */
+
+/* 换页的滑入效果 */
+.chage-in-page {
+  animation: chin 1s forwards;
+}
+
+@keyframes chin {
+  0% {
+    transform: translateX(700px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+/* 换页滑出效果 */
+.chage-out-page {
+  animation: chout 1s forwards;
+}
+
+@keyframes chout {
+  0% {}
+  100% {
+    transform: translateX(800px);
+  }
+}

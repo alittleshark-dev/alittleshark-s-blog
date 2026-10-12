@@ -1,0 +1,233 @@
+/* ========================================
+   变量定义与基础重置
+   ======================================== */
+
+/* 全局重置 */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 根变量：定义主题色（浅色/深色模式） */
+:root {
+    --color-bg-body: #F0FFF0;       /* 蜜瓜色背景 */
+    --color-bg-box: rgba(255, 255, 255, 0.6); /* 半透明白色盒子 */
+    --color-text-main: #333333;    /* 深色文字 */
+    --color-text-link: #87CEEB;    /* 天蓝色链接 */
+    --color-text-accent: #E68FAC;  /* 粉色强调色 */
+    --color-border: #333333;       /* 边框颜色 */
+}
+
+/* 深色模式变量 */
+body.dark-mode {
+    --color-bg-body: #1a1a1a;
+    --color-bg-box: rgba(50, 50, 50, 0.8);
+    --color-text-main: #f0f0f0;
+    --color-text-link: #4da6ff;
+    --color-text-accent: #ff99cc;
+    --color-border: #cccccc;
+}
+
+/* 字体引入 */
+@font-face {
+    font-family: 'BoBoHei';
+    src: url('../../../font/JingNanBoBoHei-Bold-2.ttf');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'JunJunTi';
+    src: url('../../../font/JingNanJunJunTi-JinNanJunJunTi-Bold-2.ttf');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Maiyuan';
+    src: url('../../../font/Kingnammm-Maiyuan-II-Regular-2.ttf');
+    font-display: swap;
+}
+
+/* Body 基础样式 */
+body {
+    margin: 0;
+    padding: 10px;
+    background-color: var(--color-bg-body);
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    /* grid-template-rows: 1fr 8fr; */
+    grid-template-areas:
+        "nav     nav"
+        "content main";
+    gap: 10px;
+    transition: background-color 0.3s ease;
+    min-height: 100vh;
+}
+
+/* 所有卡片/容器的通用样式 */
+.card {
+    font-family: 'JunJunTi';
+    background-color: var(--color-bg-box);
+    color: var(--color-text-main);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+nav {
+    grid-area: nav;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    height: 40px;
+}
+
+nav a {
+    margin: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-family: "BoBoHei";
+}
+
+#maincontent {
+    grid-area: main;
+    padding-left: 20px;
+}
+
+#contents {
+    grid-area: content;
+    position: fixed;
+    top: 20dvh;
+    left: 10px;              /* 或跟 body 的 padding 对齐 */
+    width: calc(25% - 20px); /* 约等于 grid 第一列的宽度 */
+    max-height: 75dvh;       /* 不超过屏幕高度 */
+    overflow-y: auto;        /* 内容太长时目录内部滚动 */
+}
+
+#contents ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#contents li {
+    margin: 8px 0;
+}
+
+#contents a {
+    text-decoration: none;
+    color: var(--color-text-main);
+}
+
+#contents a:hover {
+    color: var(--color-text-link);
+}
+
+/* 代码块容器 */
+.code-wrapper {
+    position: relative;
+    margin: 16px 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.code-wrapper .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.code-wrapper:hover .copy-btn {
+    opacity: 1;
+}
+
+.code-wrapper pre {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+}
+
+/* 交互组件 */
+#theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border: 2px solid var(--color-border);
+    background-color: var(--color-bg-box);
+    color: var(--color-text-main);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Maiyuan';
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+#theme-toggle:hover {
+    background-color: var(--color-text-accent);
+    color: #fff;
+}
+
+/* 代码框的样式 */
+pre code,
+code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+}
+
+/* 响应式：小屏幕自动变成单列 */
+@media (max-width: 768px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "nav"
+            "main"
+            "content";
+        padding: 10px;
+        gap: 15px;
+    }
+
+    /* 导航栏：允许换行，高度自适应 */
+    nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 0;
+    }
+
+    nav a {
+        margin: 8px 12px;
+    }
+
+    /* 主内容区：去掉左侧 padding */
+    #maincontent {
+        padding-left: 0;
+    }
+
+    /* 目录：取消 fixed 定位，回到文档流 */
+    #contents {
+        position: static;
+        top: auto;
+        /* 给目录加个卡片样式，和正文区分开 */
+        background-color: var(--color-bg-box);
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 目录里的列表紧凑一点 */
+    #contents li {
+        margin: 6px 0;
+    }
+}

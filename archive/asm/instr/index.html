@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asm: 第二章 基础指令 | 小鲨鱼的主页</title>
+    <link rel="stylesheet" href="../../express/css/express.css?v=1791784114">
+    <link rel="icon" href="../../../images/icon.jpg">
+    <!-- 引入 Highlight.js 高亮样式 -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Asm: 第二章 基础指令 | 小鲨鱼的主页">
+    <meta property="og:description" content="Asm教程第二章: 基础命令, 讲解了汇编基础命令的使用。">
+    <meta property="og:url" content="https://www.alittleshark.com/archive/asm/instr">
+    <meta property="og:image" content="https://www.alittleshark.com/images/icon.jpg">
+    <meta property="og:site_name" content="小鲨鱼的主页">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Asm: 第二章 基础指令 | 小鲨鱼的主页">
+    <meta name="twitter:description" content="Asm教程第二章: 基础命令, 讲解了汇编基础命令的使用">
+    <meta name="twitter:image" content="https://www.alittleshark.com/images/icon.jpg">
+    
+</head>
+<body>
+    <nav class="card">
+        <div>
+            <a href="../../../index.html">👈返回</a>
+        </div>
+    </nav>
+
+    <section class="card" id="maincontent">
+        <div style="
+        background: rgba(255, 200, 100, 0.15);
+        border-left: 4px solid #E68FAC;
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    ">
+        <strong>ⓘ（待修订版）</strong><br>
+        本文部分段落借助 AI 辅助整理，主体思路、示例、表述为作者原创。<br>
+        后续会逐步重写，统一风格，敬请期待。
+    </div>
+        <h2 id="first">前言</h2>
+        <hr><br>
+        <p>经过上一章的学习, 大家也对寄存器有了初步的认识<br>
+            并且可以一眼看出来 <code>rsi</code> 是源索引寄存器(register source index)意思<br>
+            接下来我们学习一些基础的指令
+        </p>
+        <br><br>
+        <h2 id="seg">段声明 | 汇编语言的基本结构</h2>
+        <hr><br>
+        <p>
+            一个汇编程序并不是从头到尾把指令堆在一起，<br>
+            它和 C 语言一样，有自己的组织方式。<br>
+            在 NASM（Intel 语法）下，这种结构用 <code>section</code> 来划分。<br>
+            我们沿用前言的 Hello World 来举例：
+
+            <pre><code class="language-x86asm">; 数据
+section .data
+    msg db "Hello World", 0xA ; 0xA换行符
+    len equ $ - msg           ; 当前地址 - msg 地址 = 字符串长度
+
+section .text
+    global _start
+
+_start:
+    ; sys_write
+    mov rax, 1        ; 系统调用号 1 = sys_write
+    mov rdi, 1        ; 文件描述符 1 = stdout
+    mov rsi, msg      ; 字符串地址
+    mov rdx, len      ; 字符串长度
+    syscall
+
+    ; sys_exit
+    mov rax, 60       ; 系统调用号 60 = sys_exit
+    xor rdi, rdi      ; 退出码 0
+    syscall</code></pre>
+                这里的 <code>section .data</code> 和 <code>section .text</code> 就是段声明，<br>
+                它们分别声明了数据段 <code>.data</code> 和代码段 <code>.text</code>。<br>
+                我们在 <code>.data</code> 里定义了需要用到的 <code>msg</code> 和 <code>len</code>，<br>
+                然后在 <code>.text</code> 里通过它们来引用这些数据。<br>
+                除此以外还有<code>.bss</code>, 这是未初始化数据段, 用来预留空间, 程序启动时会被清零。    
+        </p><br><br>
+
+        <h2 id="exit">退出程序</h2>
+        <hr><br>
+        <p>
+            在C++里, main 函数 return 0; 就表示程序正常结束<br>
+            Python程序运行完自动退出或者使用 <code>sys.exit()</code><br><br>
+            在汇编里，没有 <code>return</code>，也没有自动退出的机制，<br>
+            你得自己告诉操作系统：“我跑完了，可以结束了。”
+        </p>
+        <p>
+            这个“告诉操作系统”的方式，就是<strong>系统调用</strong>。<br>
+            在 x86-64 Linux 下，退出程序的系统调用号是 <code>60</code>
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">mov rax, 60       ; 系统调用号 60 = sys_exit
+xor rdi, rdi      ; 退出码 0
+syscall</code></pre>
+        </div>
+        <p>
+            这里的 <code>rax</code> 寄存器用来存放系统调用号。<br>
+            现在有人就会问了：<br>
+            诶？不是说 <code>rax</code> 处理算术运算和函数的返回值吗？<br>
+            为什么现在这里就可以是系统调用号？<br><br>
+
+            对，<code>rax</code> 确实处理算术运算和函数的返回值，<br>
+            但在这里它是系统调用号。<br>
+            因为 CPU 运行的时候一看：<br>
+            诶？这里是 <code>syscall</code>，<br>
+            那得看看 <code>rax</code> 里面的系统调用号是多少。<br>
+            结果一看<br>
+            "60 号……退出? 行吧, 今天活少, 昨天可累坏了, 下班！"<br>
+        </p><br>
+        <p>
+            这个<code>xor rdi, rdi</code>是归零退出码也就是<code>echo $?</code>显示的东西<br>
+            在 x86-64 Linux 下，rdi 是系统调用的第一个参数寄存器<br>
+            对程序来说，这个参数就是退出码<br>
+        </p>
+
+        <br><br>
+        <h2 id="data">内存数据</h2>
+        <hr><br>
+        <p>
+            定义内存数据是在.data里面<br>
+            像这样<code>msg db "Hello World"</code><br>
+            就是在内存里面定义一个标签是msg内容是"Hello World"的数据<br><br>
+            msg是标签, 指向这块数据的地址, 你可以把它当成变量名来理解<br>
+            db 表示按字节存放，"Hello World"<br>
+            里的每个字符占 1 字节<br>
+            "Hello World"一共11个字符<br>
+            所以这一行一共定义了 11 个字节<br>
+            常见的类型有：<br>
+            db (define byte): 1字节<br>
+            dw (define word): 2字节<br>
+            dd (define doubleword): 4字节<br>
+            dq (define quadword): 8字节<br>举个例子
+            <div class="code-wrapper">
+                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    <pre><code class="language-x86asm">section .data
+    a db 1   ; 标签a存1
+    b dw 1   ; 标签b大小为2个字节</code></pre>
+            </div>
+        </p><br><br>
+        <h2 id="bss">未初始化数据 | .bss</h2>
+        <hr><br>
+
+        <p>
+            不是所有数据一开始就有值。<br>
+            比如你想开一块缓冲区，先占个位置，等程序跑起来再往里写，<br>
+            这时候就轮到 <code>.bss</code> 出场了。
+        </p>
+
+        <p>
+            <code>.bss</code> 是未初始化数据段，用来预留空间。<br>
+            它和 <code>.data</code> 最大的区别是：<br>
+            <code>.data</code> 里的数据有初始值，会写进可执行文件；<br>
+            <code>.bss</code> 只记录“要预留多少空间”，不占可执行文件体积。
+        </p>
+
+        <p>
+            写法上，用 <code>resb</code> / <code>resw</code> / <code>resd</code> / <code>resq</code>：<br>
+            <code>resb</code>（reserve byte）：预留 1 字节<br>
+            <code>resw</code>（reserve word）：预留 2 字节<br>
+            <code>resd</code>（reserve doubleword）：预留 4 字节<br>
+            <code>resq</code>（reserve quadword）：预留 8 字节
+        </p>
+
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .bss
+    buffer resb 64    ; 预留 64 字节
+    count  resd 1     ; 预留 4 字节</code></pre>
+        </div>
+
+        <p>
+            注意 <code>.bss</code> 里不能给初始值，<br>
+            所以 <code>buffer resb 64</code> 是对的，<br>
+            但 <code>buffer db 0</code> 这样的应该在section .data后面。
+        </p><br><br>
+        <h2 id="text">代码段 | .text</h2>
+        <hr><br>
+        <p>
+            这里放要用运行的代码
+            <div class="code-wrapper">
+                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                <pre><code class="language-x86asm">section .text
+    global _start
+
+_start:
+    ; 你的代码</code></pre>
+            </div>
+        这里的<code>global _start</code>是 NASM 的伪指令<br>
+        意思是把 _start 这个符号导出为全局符号，让链接器（linker）能看见它。<br>
+        这里说到的伪指令，顾名思义就是假的指令，这些指令不会变成机器码、不由 CPU 执行,而是由汇编器执行<br>
+        如果各位学过 C，那肯定会这么想，"那这不就是预处理操作吗？"对，可以这样理解<br>
+        (但是严格的说，伪指令的范围比 C 预处理更广，像 db 定义数据这类，预处理里就没有直接对应)<br><br>
+        
+        这时候有些读者一看就会说: <br>
+        你看，还要专门写个 _start: 和 global _start，多麻烦啊，<br>
+        就好比写 Python，本来直接写就能跑的小脚本，非要套一层 main<br>
+        对，我在写这篇文章的时候也这么想过<br>
+        但是啊，是可以这样写，程序就不知道从哪开始跑了<br>
+        这时候汇编是通过的但是链接会报错<br>
+        <code>warning: cannot find entry symbol _start; defaulting to 0000000000401000</code><br>
+        它不知道从哪里开始，只能猜一个地址，结果只能靠运气<br>
+        恰好最近作者原神抽卡运气差到 50 连都没有出过一个金，自然运行不了（笑）<br>
+        所以还是老老实实写上 _start: 和 global _start 吧。<br>
+        </p>
+        <br><br>
+        <h2 id="addressing">寻址</h2>
+        <hr><br>
+        <p>
+            寻址其实初学者只要知道<code>[a]</code>是取内存标签 a 里的值就可以了<br>
+            以及知道绝对寻址和相对寻址的区别<br>
+            绝对寻址是这样的<br>
+            <div class="code-wrapper">
+                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                <pre><code class="language-x86asm">section .data
+    a dq 1          ; 用 dq，占 8 字节，和 rax 匹配
+
+section .text
+    ; 绝对寻址
+    mov rax, [a]</code></pre>
+            </div>
+            意思：去 a 的地址里取值，放进 rax <br>
+            机器码里写死了 a 的绝对地址比如 0x0000000000402000 <br>
+            现代 64 位程序（PIE/共享库）里不推荐<br>
+            nasm更推荐使用相对寻址
+            <div class="code-wrapper">
+                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                <pre><code class="language-x86asm">section .data
+    a dq 1          ; 用 dq，占 8 字节，和 rax 匹配
+
+section .text
+    ; 相对寻址
+    mov rax, [rel a]</code></pre>
+            </div>
+            意思：同样去 a 的地址里取值
+            但机器码里存的是"距离当前指令多远"，不是写死地址
+            程序被加载到任何位置都能找到 a，所以推荐
+        </p>
+        <br><br>
+        <h2 id="mov">Mov指令</h2>
+        <hr><br>
+        <p>
+            这是以后最经常用的指令mov<br>
+            <code>mov rax, 1</code>
+            他的作用是将逗号后面里面的东西放在前面<br>
+            例如上面这个，就是指把1放进rax寄存器里面<br>
+            不过这里不推荐用 rax，因为 a db 1 只占 1 字节<br>
+            用 64 位的 rax 去读会连后面 7 字节一起读进来<br>
+            数据多大就用多宽的寄存器，读 1 字节用 al 正好<br>
+            <code>mov al, 1</code><br>
+            除此以外还可以将内存中的数据存入寄存器<br>
+            像这样<br>
+                    <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a db 1 ; 定义一个标签为a, 一字节的数据
+
+section .text
+    global _start  ; 入口
+
+_start:
+    mov al, [rel a]
+            </code></pre>
+            或将寄存器的东西搬移内存<code>mov [rel a], al</code><br>
+            但是内存和内存是不合法的<code>mov [rel a], [rel b] ; 会报错</code><br>
+        </div>
+        <br><br><h2 id="add">ADD指令</h2>
+        <hr><br>
+        <p>
+            ADD，顾名思义就是小学学的1+1=2。<br>
+            指令是 <code>add</code>，用法和 <code>mov</code> 很像：<code>add 目标, 源</code>，<br>
+            把「源」加到「目标」上，结果存回「目标」。<br><br>
+            当然你也可以认为是<br>
+            <code>add 第一个数字, 第二个数字</code><br><br>
+            接下来两个寄存器相加是这样的：
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .text
+    global _start
+
+_start:
+    mov al, 1
+    mov bl, 1
+    ; 用 rax、rbx 的低 8 位 al、bl 相加
+    add al, bl      ; al = al + bl = 2</code></pre>
+        </div>
+        <p>
+            和 <code>mov</code> 一样，数据多大就用多宽的寄存器。<br>
+            加 1 这种小数字，用低 8 位的 <code>al</code>、<code>bl</code> 就够了。<br><br>
+
+            那如果两个数都在内存里呢？<br>
+            你可能会想直接写 <code>add [rel a], [rel b]</code>。<br>
+            同样不行，x86 不允许两个操作数都是内存，这样写会报错。<br>
+            所以得找个寄存器当中转：先读进来，加完再写回去。<br>
+            写出来就是这样：
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a db 1
+    b db 1
+
+section .text
+    global _start
+
+_start:
+    ; 加法
+    ; add [rel a], [rel b] 是非法的（两个操作数不能都是内存）
+    ; 所以第一步是把 a 读进 al 中转
+    mov al, [rel a]
+    ; 把内存 b 的值加到 al 上，结果存回 al
+    add al, [rel b]
+    ; 把 al 的值写回内存 a
+    mov [rel a], al
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            顺一遍这三步：<br>
+            <code>mov al, [rel a]</code>：al = a = 1<br>
+            <code>add al, [rel b]</code>：al = al + b = 2<br>
+            <code>mov [rel a], al</code>：把 2 写回 a<br><br>
+
+            这里结果是 2，<code>al</code> 装得下。<br>
+            但如果结果超过 255，<code>al</code> 就溢出了，那就得换更宽的寄存器。<br>
+            记住一句话：<strong>数据多大，就用多宽的寄存器。</strong>
+        </p>
+        <br><br>
+
+        <h2 id="sub">SUB指令</h2>
+        <hr><br>
+        <p>
+            减法和加法几乎一样，指令是 <code>sub</code> 语法： <code>sub 目标, 源</code>，<br>
+            把「源」从「目标」里减掉，结果存回「目标」。<br>
+            规则也一样：只有「内存和内存」做减法是非法的，其他都合法。
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a db 1
+    b db 1
+
+section .text
+    global _start
+
+_start:
+    ; 和 add 一样，只有内存和内存做减法是非法的
+    mov al, [rel a]
+    sub [rel b], al     ; b = b - a
+
+    mov al, 1
+    mov bl, 1
+    sub al, bl          ; al = al - bl = 0
+    mov [rel a], al     ; 写回 a
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            这里 <code>sub [rel b], al</code> 是合法的：<br>
+            一个操作数是内存，另一个是寄存器，没问题。<br>
+            所以减法的规则可以记成：<strong>内存和内存不行，其余都行。</strong>
+        </p>
+        <br><br>
+
+        <h2 id="inc">INC指令</h2>
+        <hr><br>
+        <p>
+            <code>inc</code> 是自增，把操作数加一。<br>
+            相当于Cpp的a++<br>
+            它只有一个操作数，所以不用考虑“两个内存”的问题。<br><br>
+
+            麻烦的地方在于：<code>[a]</code> 只是一个地址，<br>
+            汇编器不知道你要操作几个字节——1 字节？4 字节？8 字节？<br>
+            所以对内存操作数，得用「大小限定符」告诉它。
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a db 1
+
+section .text
+    global _start
+
+_start:
+    ; inc 大小限定符 内存操作数
+    ; 不写 byte，汇编器不知道 a 是几字节
+    inc byte [rel a]     ; a = a + 1
+
+    ; 寄存器本身宽度明确，不用写限定符
+    mov al, 1
+    inc al               ; al = al + 1
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            大小限定符有 <code>byte</code>、<code>word</code>、<code>dword</code>、<code>qword</code>，<br>
+            分别对应 1、2、4、8 字节，要和数据的定义（db/dw/dd/dq）对得上。<br>
+            寄存器因为宽度是固定的，所以不用写。
+        </p>
+        <br><br>
+
+        <h2 id="dec">DEC指令</h2>
+        <hr><br>
+        <p>
+            <code>dec</code> 和 <code>inc</code> 正好相反，是自减，把操作数减一。<br>
+            规则一模一样：内存操作数要写大小限定符，寄存器不用。
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a db 1
+
+section .text
+    global _start
+
+_start:
+    ; dec 大小限定符 内存操作数
+    dec byte [rel a]     ; a = a - 1
+
+    ; 寄存器不用写限定符
+    mov al, 1
+    dec al               ; al = al - 1
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <br><br>
+
+        <h2 id="mul">MUL指令</h2>
+        <hr><br>
+        <p>
+            乘法指令是 <code>mul</code>，它和前面几个不太一样：<br>
+            <strong>只能写一个操作数</strong>，另一个乘数是隐式的，固定在 <code>rax</code> 家族里。<br>
+            具体是哪个宽度，取决于你写的大小限定符：
+        </p>
+        <p>
+            <code>mul byte  [x]</code>：被乘数是 <code>al</code>，结果放 <code>ax</code><br>
+            <code>mul word  [x]</code>：被乘数是 <code>ax</code>，结果放 <code>dx:ax</code><br>
+            <code>mul dword [x]</code>：被乘数是 <code>eax</code>，结果放 <code>edx:eax</code><br>
+            <code>mul qword [x]</code>：被乘数是 <code>rax</code>，结果放 <code>rdx:rax</code>
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .text
+    global _start
+
+_start:
+    ; mul 类型(byte, word, dword) 乘数
+    ; 被乘数隐式地写在 al 里
+    mov al, 6
+    mov bl, 2
+    ; 寄存器可以不写类型
+    mul bl              ; ax = al * bl = 12
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            几个要注意的点：<br>
+            1. <code>mul</code> 不能操作立即数，<code>mul byte 1</code> 这种写法是错的。<br>
+            2. 操作数是内存时要写大小限定符，寄存器不用。<br>
+            3. <code>mul</code> 是无符号乘法，<code>imul</code> 是有符号乘法，别混。<br>
+            4. 结果会占用两倍宽度的寄存器对（比如 byte 乘法结果在 <code>ax</code>，word 乘法在 <code>dx:ax</code>），这是为了防止溢出。
+        </p>
+        <br><br>
+        <h2 id="div">DIV指令</h2>
+        <hr><br>
+        <p>
+            <code>div</code> 是除法，和 <code>mul</code> 一样只能写一个操作数。<br>
+            不过它用起来更绕一点：<strong>被除数和结果用的都是固定的寄存器对</strong>，<br>
+            取决于操作数的宽度：
+        </p>
+        <p>
+            <code>div byte  [x]</code>：被除数是 <code>ax</code>，商放 <code>al</code>，余数放 <code>ah</code><br>
+            <code>div word  [x]</code>：被除数是 <code>dx:ax</code>，商放 <code>ax</code>，余数放 <code>dx</code><br>
+            <code>div dword [x]</code>：被除数是 <code>edx:eax</code>，商放 <code>eax</code>，余数放 <code>edx</code><br>
+            <code>div qword [x]</code>：被除数是 <code>rdx:rax</code>，商放 <code>rax</code>，余数放 <code>rdx</code>
+        </p>
+        <p>
+            先看 byte 除法。这里有个<strong>最容易踩的坑</strong>：<br>
+            <code>div byte [x]</code> 的被除数是 <code>ax</code>，<strong>是 16 位的 <code>ax</code>，不是 8 位的 <code>al</code></strong>。<br>
+            就算你的被除数很小，也得放进 <code>ax</code>。<br>
+            如果只往 <code>al</code> 里塞，<code>ah</code> 里可能是脏数据，结果就错了。
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    b db 9
+
+section .text
+    global _start
+
+_start:
+    ; 和 mul 差不多，只能写单操作数
+    ; 但是参数前面得写类型
+    mov ax, 6           ; byte 除法的被除数是 ax，不能只放 al
+    div byte [rel b]    ; ax / b，商放 al，余数放 ah
+                        ; 6 / 9 = 0 余 6，所以 al = 0，ah = 6
+
+    ; 有符号除法用 idiv
+    mov ax, 9
+    mov bl, 3
+    idiv bl             ; 9 / 3 = 3，商放 al，余数放 ah
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            注意这几点：<br>
+            1. <code>div</code> 的操作数不能是立即数，<code>div byte 1</code> 是错的。<br>
+            2. 除之前一定要把被除数放对位置：byte 除法要先放进 <code>ax</code>，不能只放 <code>al</code>。<br>
+            3. 如果结果太大装不下（比如 byte 除法商超过 255），会触发「除法溢出」异常，程序直接崩。<br>
+            4. <code>div</code> 是无符号除法，<code>idiv</code> 是有符号除法。<br>
+            5. 有符号数用补码表示，<code>idiv</code> 出来的商和余数也遵循有符号规则。这里先用正数演示，等后面讲补码再回来看负数。
+        </p>
+        <br><br>
+        <h2 id="lea">LEA指令</h2>
+        <hr><br>
+        <p>
+            前面讲寻址的时候，我们一直在说：<br>
+            <code>[a]</code> 是取 a 地址里的值，也就是加方括号就是「取值」。<br>
+            那问题来了——<strong>如果我只想要这个地址，不想取值呢？</strong><br><br>
+
+            比如以后要调用函数，得把字符串的地址告诉它，<br>
+            而不是把字符串的内容一个字节一个字节传过去。<br>
+            这时候就需要把「地址」本身取出来。<br>
+            干这件事的指令，就是 <code>lea</code>。
+        </p>
+
+        <p>
+            <code>lea</code> 的全称是 <strong>Load Effective Address</strong>，<br>
+            翻译过来就是「加载有效地址」，其实就是<strong>把地址取出来</strong>。<br>
+            它<strong>不访问内存</strong>，只是把算出来的地址放进寄存器。<br><br>
+
+            举个例子：
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .data
+    a dq 1          ; 用 dq，占 8 字节，和 rax 匹配
+
+section .text
+    global _start
+
+_start:
+    ; mov + []  ：去 a 的地址里取值，放进 rax
+    mov rax, [rel a]    ; rax = 1（a 里存的值）
+
+    ; lea      ：把 a 的地址本身放进 rax
+    lea rax, [rel a]    ; rax = a 的地址，比如 0x0000000000402000
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall</code></pre>
+        </div>
+        <p>
+            这两行看着很像，其实差别就在用的是 <code>mov</code> 还是 <code>lea</code>：<br><br>
+
+            <code>mov rax, [rel a]</code>：去 a 的地址，把里面的<strong>值</strong>读出来（1）<br>
+            <code>lea rax, [rel a]</code>：把 a 的<strong>地址本身</strong>放进 rax（0x0000000000402000）<br><br>
+        </p>
+
+        <p>
+            这里就有人会问了：<br>
+            诶？<code>lea</code> 后面也带方括号，怎么就不取值了？<br>
+            不是说方括号就是取值吗？<br><br>
+
+            对，方括号本身确实是「算一个地址」的意思。<br>
+            差别在于 <code>mov</code> 和 <code>lea</code> 接下来怎么做：<br><br>
+
+            <code>mov</code>：算完地址，<strong>再去这个地址里读</strong>，把读到的值放进寄存器<br>
+            <code>lea</code>：算完地址，<strong>不读了</strong>，直接把这个地址放进寄存器<br><br>
+
+            所以可以记成：<br>
+            <strong><code>mov</code> 会「进去拿东西」，<code>lea</code> 只「记下门牌号」。</strong>
+        </p>
+
+        <p>
+            最后总结一下：<br>
+            <code>mov rax, [rel a]</code>：取 a 里的值<br>
+            <code>lea rax, [rel a]</code>：取 a 的地址<br>
+            <code>mov</code> 会读内存，<code>lea</code> 不会<br>
+            记住一句：<strong><code>lea</code> 只记地址，不取内容。</strong>
+        </p>
+        <br><br>
+
+        <h2 id="pushpop">PUSH / POP 指令</h2>
+        <hr><br>
+        <p>
+            前面讲 <code>mov</code> 的时候，我们说数据可以在寄存器和内存之间搬。<br>
+            但有时候你只是想<strong>临时存一下</strong>某个寄存器的值，<br>
+            等会儿还要用，又不想专门在 <code>.data</code> 里开个变量。<br><br>
+
+            这时候就轮到 <code>push</code> 和 <code>pop</code> 出场了。<br>
+            <code>push</code> 是压栈，把值存到栈上；<br>
+            <code>pop</code> 是出栈，把栈上的值取回来。
+        </p>
+
+        <p>
+            先说栈是什么。<br>
+            你可以把栈想象成一摞盘子：<br>
+            你只能从<strong>最上面</strong>放盘子，也只能从<strong>最上面</strong>拿盘子。<br>
+            后放进去的，先被拿出来，这就是「后进先出」。<br><br>
+
+            在 x86-64 里，栈顶的地址存在 <code>rsp</code> 寄存器里。<br>
+            而且栈是<strong>往低地址方向增长</strong>的：<br>
+            每 <code>push</code> 一次，<code>rsp</code> 就<strong>减小</strong>一点；<br>
+            每 <code>pop</code> 一次，<code>rsp</code> 就<strong>增大</strong>回来。<br>
+            这个方向记一下，后面讲函数调用会经常用到。
+        </p>
+
+        <p>
+            看个最简单的例子：
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .text
+    global _start
+
+_start:
+    mov rax, 0xFFFF
+    ; 压栈：把 rax 的值存到栈上，rsp 减小
+    push rax
+
+    ; 出栈：把栈顶的值取出来，放进 rbx，rsp 增大
+    pop rbx
+
+    ; 返回结果（把 rbx 当退出码）
+    mov rdi, rbx
+    mov rax, 60
+    syscall</code></pre>
+        </div>
+        
+        <p>
+            <code>call fun</code> 其实做了两件事：<br>
+            1. 把 <code>call</code> 下一条指令的地址<strong>压栈</strong><br>
+            2. 跳到 <code>fun</code><br><br>
+
+            而 <code>ret</code> 做的正好相反：<br>
+            1. 从栈顶<strong>弹出一个地址</strong><br>
+            2. 跳过去<br><br>
+
+            所以也可以理解成：<br>
+            <strong><code>call</code> = <code>push 返回地址</code> + <code>jmp</code><br>
+            <code>ret</code> = <code>pop 返回地址</code> + <code>jmp</code></strong><br>
+            栈的第一次正经用途，就是干这个。
+        </p>
+
+        <p>
+            要注意的是：<br><br>
+
+            1. <code>push</code> 和 <code>pop</code> 都是<strong>单操作数</strong>，<br>
+            只能写一个东西，不能像 <code>mov</code> 那样写两个。<br>
+            而且 <code>push</code> 后面不能接立即数太大（超过 32 位会报错），<br>
+            但寄存器、内存、小立即数都可以。<br><br>
+
+            2. <code>push</code> 和 <code>pop</code> 的<strong>宽度要匹配</strong>。<br>
+            在 64 位模式下，<code>push rax</code> 压的是 8 字节，<br>
+            <code>pop rbx</code> 取的也是 8 字节。<br>
+            如果你 <code>push rax</code> 之后 <code>pop ebx</code>，只取低 4 字节，<br>
+            <code>rsp</code> 就恢复不到原来的位置，后面会出问题。
+        </p><br>
+        <p>
+            最后总结一下：<br>
+            <code>push 值</code>：把值压到栈上，<code>rsp</code> 减小<br>
+            <code>pop 寄存器</code>：把栈顶的值取出来，放进寄存器，<code>rsp</code> 增大<br>
+            栈是后进先出，<code>rsp</code> 指向栈顶，栈往低地址增长<br>
+            记住一句：<strong><code>push</code> 进去的，要用同样宽度的 <code>pop</code> 取回来。</strong>
+        </p>
+        <br><br>
+
+        <h2 id="callret">CALL / RET 指令</h2>
+        <hr><br>
+        <p>
+            到目前我们写的程序，代码都是从 <code>_start</code> 一路往下跑，<br>
+            跑完就退出，中间没有「跑一段再回来」的过程。<br>
+            但真实的程序肯定不是这样：<br>
+            你会有很多重复的代码，希望写一次、到处调用；<br>
+            也可能想把一段逻辑单独拎出来，方便复用。<br><br>
+
+            这时候就需要 <code>call</code> 和 <code>ret</code>。<br>
+            <code>call</code> 是调用一段代码，<code>ret</code> 是从这段代码返回。<br>
+            它俩几乎就是为「函数」而生的。
+        </p>
+
+        <p>
+            先看最简单的例子：
+        </p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">section .text
+    global _start
+
+_start:
+    call fun            ; 跳到 fun，并把下一条指令的地址记下来
+
+    mov rax, 60         ; fun 返回后会从这里继续
+    syscall
+
+fun:
+    mov rdi, 1
+    ; 结束回到 call 下一条
+    ret</code></pre>
+        </div>
+
+        <p>
+            注意：<br>
+
+            1. <code>call</code> 和 <code>ret</code> 是<strong>成对</strong>的。<br>
+            进去一次，就要回来一次。<br>
+            如果 <code>call</code> 了没 <code>ret</code>，程序会一直往下跑，<br>
+            最后不是跑到别的数据上，就是直接崩。<br><br>
+
+            2. <code>ret</code> 不检查栈上弹出来的地址对不对。<br>
+            如果中间你 <code>push</code> 了别的东西没 <code>pop</code> 掉，<br>
+            <code>ret</code> 就会弹出一个错误地址，直接飞到不知道哪里去。<br>
+            这个后面讲栈帧的时候会重点说。
+        </p>
+        <br><br>
+        <h2 id="about-code">关于代码?</h2>
+        <hr><br>
+        <p>
+            部分代码已开源到
+            <a href="https://github.com/alittleshark-dev/Asm-Learn-note">
+                alittleshark-dev/Asm-Learn-Note
+            </a><br>
+            注意：有些代码只是为了演示，不能直接运行。<br>
+            仓库持续更新中...
+        </p>
+    </section>
+    <section class="card" id="contents">
+        <h3>目录</h3>
+        <ul>
+            <li><a href="#first">前言</a></li>
+            <li>--------------------------</li>
+            <li>前置知识
+                <ul>
+                    <li><a href="#seg">段声明 | 汇编语言的基本结构</a></li>
+                    <li><a href="#exit">退出程序</a></li>
+                    <li><a href="#data">内存数据 | .data</a></li>
+                    <li><a href="#bss">未初始化数据 | .bss</a></li>
+                    <li><a href="#text">代码段</a></li>
+                    <li><a href="#addressing">寻址</a></li>
+                    <li><p>--------------------------</p></li>
+                </ul>
+            </li>
+            <li>汇编指令
+                <ul>
+                    <li><a href="#mov">Mov指令</a></li>
+                    <li><a href="#add">ADD指令</a></li>
+                    <li><a href="#sub">SUB指令</a></li>
+                    <li><a href="#inc">INC指令</a></li>
+                    <li><a href="#dec">DEC指令</a></li>
+                    <li><a href="#mul">MUL指令</a></li>
+                    <li><a href="#div">DIV指令</a></li>
+                    <li><a href="#lea">LEA指令</a></li>
+                    <li><a href="#pushpop">PUSH / POP指令</a></li>
+                    <li><a href="#callret">CALL / RET指令</a>
+                    <li>--------------------------</li>
+                </ul>
+            </li>
+            <li><a href="#about-code">关于代码</a></li>
+        </ul>
+    </section>
+
+    <button id="theme-toggle">切换主题</button>
+
+    <!-- 引入 Highlight.js 核心 -->
+    <script src="../express/js/express.js?v=1791784114"></script>
+    <script src="../express/js/codebox.js?v=1791784114"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

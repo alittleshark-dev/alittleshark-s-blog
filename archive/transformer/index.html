@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer</title>
+    <link rel="stylesheet" href="../express/css/express.css?v=1791784114">
+    <link rel="icon" href="../../images/icon.jpg">
+    <!-- 引入 Highlight.js 高亮样式 -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="标题">
+    <meta property="og:description" content="简介">
+    <meta property="og:url" content="https://www.alittleshark.com/archive">
+    <meta property="og:image" content="https://www.alittleshark.com/images/icon.jpg">
+    <meta property="og:site_name" content="小鲨鱼的主页">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="标题">
+    <meta name="twitter:description" content="简介 ">
+    <meta name="twitter:image" content="https://www.alittleshark.com/images/icon.jpg">
+    
+</head>
+<body>
+    <nav class="card">
+        <div>
+            <a href="../../index.html">👈返回</a>
+        </div>
+    </nav>
+
+    <section class="card" id="maincontent">
+        <h2>关于这个文章</h2>
+        <p>这是一个模板用来写后续的博客</p>
+        <hr>
+        <p>接下来是一大堆废话</p>
+
+
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-x86asm">
+;x64 asm
+section .data
+    msg db "Hello World", 0xA
+
+section .text
+    global _start
+
+_start:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, len
+    syscall
+
+    ; exit
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+            </code></pre>
+        </div>
+
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-c">
+// C
+#include &lt;stdio.h&gt;
+
+main(){
+    printf("Hello World");
+}
+            </code></pre>
+        </div>
+
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-java">
+// Java
+public class hello {
+    public static void Main(String[] args){
+        System.out.print(Hello World");
+    }
+}
+            </code></pre>
+        </div>
+
+        <!-- 代码块 -->
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-python">
+# Python
+print("Hello World")
+            </code></pre>
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-rust">
+// Rust
+fn main(){
+    println!("Hello World");
+}
+            </code></pre>
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-html">
+&lt;!-- HTML --&gt;
+&lt;h1&gt;Hello World&lt;/h1&gt;
+            </code></pre>
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            <pre><code class="language-lua">
+-- Lua
+print("Hello World");
+            </code></pre>
+        </div>
+        
+    </section>
+
+    <section class="card" id="contents">
+        <h3>目录</h3>
+        <ul>
+            <li><a href="#about">关于这个文章</a></li>
+        </ul>
+    </section>
+
+    <button id="theme-toggle">切换主题</button>
+
+    <!-- 引入 Highlight.js 核心 -->
+    <script src="../express/js/express.js?v=1791784114"></script>
+    <script src="../express/js/codebox.js?v=1791784114"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
